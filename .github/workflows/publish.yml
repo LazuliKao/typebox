@@ -9,14 +9,37 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
-      id-token: write
+      contents: write
+      packages: write
 
     steps:
       - uses: actions/checkout@v5
 
+      - name: Update package name and scope
+        run: |
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          NODE_PKG_NAME="@$REPO_LOWER"
+          node -e "const pkg = JSON.parse(require('fs').readFileSync('package.json')); pkg.name = '$NODE_PKG_NAME'; require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2))"
+          echo "SCOPE=@$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '${{ env.SCOPE }}'
+
+      - name: Extract version
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Update version
+        run: |
+          npm version ${{ steps.version.outputs.VERSION }} --no-git-tag-version
+
       - name: Publish package
-        run: npx jsr publish
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   releases:
     runs-on: ubuntu-latest

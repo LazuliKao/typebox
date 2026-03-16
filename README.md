@@ -1,7 +1,5 @@
 # Types for the sing-box config
 
-[![JSR](https://jsr.io/badges/@zhexin/typebox)](https://jsr.io/@zhexin/typebox)
-
 This project provides TypeScript types for the entire sing-box config.
 
 ## Why Use TypeBox?
@@ -30,30 +28,36 @@ You can try TypeBox in browser: [TypeBox Playground](https://typebox.zhexin.org)
 
 ```jsonc
 {
-    "$schema": "https://github.com/jiang-zhexin/typebox/releases/latest/download/schema.json",
+    "$schema": "https://github.com/LazuliKao/typebox/releases/latest/download/schema.json",
     // other sing-box config
 }
 ```
 
 ### Use in TypeScript
 
+To use it from GitHub Packages, you need to configure your `.npmrc`:
+
+```text
+@lazulikao:registry=https://npm.pkg.github.com
+```
+
+Then install:
+
 ```bash
 # Node.js
-npx jsr add @zhexin/typebox
-yarn add jsr:@zhexin/typebox
-pnpm add jsr:@zhexin/typebox
-# Deno
-deno add jsr:@zhexin/typebox
+npm install @lazulikao/typebox
+yarn add @lazulikao/typebox
+pnpm add @lazulikao/typebox
 # Bun
-bunx jsr add @zhexin/typebox
+bun add @lazulikao/typebox
 ```
 
 Coding
 
 ```ts
 // main.ts
-import { createTypebox } from "@zhexin/typebox"
-import { createOutbound } from "@zhexin/typebox/outbound"
+import { createTypebox } from "@lazulikao/typebox"
+import { createOutbound } from "@lazulikao/typebox/outbound"
 
 const ss_out = createOutbound({
     type: 'shadowsocks',

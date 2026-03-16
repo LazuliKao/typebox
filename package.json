@@ -1,0 +1,14 @@
+{
+  "name": "@lazulikao/typebox",
+  "version": "1.13.30",
+  "description": "Types for the sing-box config",
+  "type": "module",
+  "main": "mod.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LazuliKao/typebox.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
+}
