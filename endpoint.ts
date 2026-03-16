@@ -9,6 +9,8 @@
  */
 
 import type { amnezia, dialer, duration, item_with_tag, listable } from './types.ts'
+import type { inbound } from './inbound.ts'
+import type { outbound } from './outbound.ts'
 
 export const createEndpoint = <
     tag extends string,
@@ -163,13 +165,13 @@ interface tunnel_client<T extends string, O extends string, DS extends string> e
     type: 'tunnel_client'
     uuid: string
     key: string
-    outbound: import('./outbound.ts').outbound<string, O, DS>
+    outbound: outbound<string, O, DS>
 }
 interface tunnel_server<T extends string, I extends string> extends item_with_tag<T> {
     type: 'tunnel_server'
     uuid: string
     users: { uuid: string; key: string }[]
-    inbound: import('./inbound.ts').inbound<string, string, string, I, string>
+    inbound: inbound<string, string, string, I, string>
     connect_timeout?: duration
 }
 
