@@ -71,11 +71,13 @@ export type outbound<tag extends string, outbound_tag extends string, dns_server
     | anytls<tag, outbound_tag, dns_server_tag>
     | tor<tag, outbound_tag, dns_server_tag>
     | ssh<tag, outbound_tag, dns_server_tag>
+    | mieru<tag, outbound_tag, dns_server_tag>
     | selector<tag, outbound_tag>
     | urltest<tag, outbound_tag>
 
+
 interface remote<T extends string, O extends string, DS extends string> extends dialer<O, DS>, item_with_tag<T> {
-    network?: network
+    network?: listable<network>
 }
 
 interface direct<T extends string, O extends string, DS extends string> extends dialer<O, DS>, item_with_tag<T> {
@@ -211,7 +213,6 @@ interface hysteria2<T extends string, O extends string, DS extends string> exten
         type: 'salamander'
         password: string
     }
-    password?: string
     tls: tls
     brutal_debug?: boolean
     masquerade?: string | masquerade
@@ -236,7 +237,16 @@ interface anytls<T extends string, O extends string, DS extends string> extends 
     min_idle_session?: number
     tls?: tls
 }
+interface mieru<T extends string, O extends string, DS extends string> extends remote<T, O, DS>, server {
+    type: 'mieru'
+    server_ports?: listable<string>
+    transport?: 'TCP' | 'UDP' | string
+    username: string
+    password: string
+    multiplexing?: string
+}
 interface tor<T extends string, O extends string, DS extends string> extends dialer<O, DS>, item_with_tag<T> {
+
     type: 'tor'
     executable_path?: string
     extra_args?: string

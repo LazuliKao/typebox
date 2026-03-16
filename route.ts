@@ -114,7 +114,9 @@ interface options {
      * Conflict with `tls_fragment`.
      */
     tls_record_fragment?: boolean
+    override_tunnel_destination?: string
 }
+
 interface action_sniff {
     action: 'sniff'
     sniffer?: listable<sniff_protocol>

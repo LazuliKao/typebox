@@ -91,8 +91,10 @@ export declare namespace dns {
         | fakeip<tag>
         | tailscale<tag, outbound_tag>
         | resolved<tag, service_tag>
+        | sdns<tag, outbound_tag, dns_server_tag>
     export { rule }
 }
+
 /**
  * @deprecated Legacy DNS servers is deprecated and will be removed in sing-box 1.14.0
  * @since 1.12.0
@@ -223,6 +225,11 @@ interface resolved<T extends string, S extends string> extends item_with_tag<T> 
     service: S
     accept_default_resolvers?: boolean
 }
+interface sdns<T extends string, O extends string, DS extends string> extends dialer<O, DS>, item_with_tag<T> {
+    type: 'sdns'
+    stamp: string
+}
+
 
 type rule<
     O extends string,

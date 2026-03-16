@@ -144,7 +144,7 @@ interface vless<T extends string, O extends string, DS extends string, I extends
 }
 interface tuic<T extends string, O extends string, DS extends string, I extends string> extends listen<T, I> {
     type: 'tuic'
-    users: tuic_user[]
+    users?: tuic_user[]
     congestion_control?: 'cubic' | 'new_reno' | 'bbr'
     auth_timeout?: duration
     zero_rtt_handshake?: boolean
@@ -267,6 +267,6 @@ interface vless_user {
 }
 interface tuic_user {
     name?: string
-    uuid: string
+    uuid?: string
     password?: string
 }

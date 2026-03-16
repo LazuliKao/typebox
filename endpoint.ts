@@ -8,7 +8,7 @@
  * ```
  */
 
-import type { dialer, duration, item_with_tag, listable } from './types.ts'
+import type { amnezia, dialer, duration, item_with_tag, listable } from './types.ts'
 
 export const createEndpoint = <
     tag extends string,
@@ -30,7 +30,13 @@ export type endpoint<
     tag extends string,
     outbound_tag extends string,
     dns_server_tag extends string,
-> = wireguard<tag, outbound_tag, dns_server_tag> | tailscale<tag, outbound_tag, dns_server_tag>
+> =
+    | wireguard<tag, outbound_tag, dns_server_tag>
+    | tailscale<tag, outbound_tag, dns_server_tag>
+    | warp<tag, outbound_tag, dns_server_tag>
+    | tunnel_client<tag, outbound_tag, dns_server_tag>
+    | tunnel_server<tag, tag>
+
 
 interface wireguard<T extends string, O extends string, DS extends string> extends dialer<O, DS>, item_with_tag<T> {
     type: 'wireguard'
@@ -43,7 +49,9 @@ interface wireguard<T extends string, O extends string, DS extends string> exten
     peers: peer[]
     udp_timeout?: duration
     workers?: number
+    amnezia?: amnezia
 }
+
 interface tailscale<T extends string, O extends string, DS extends string> extends dialer<O, DS>, item_with_tag<T> {
     type: 'tailscale'
     /**
@@ -129,3 +137,36 @@ interface peer {
     persistent_keepalive_interval?: number
     reserved?: number[]
 }
+
+interface warp<T extends string, O extends string, DS extends string> extends dialer<O, DS>, item_with_tag<T> {
+    type: 'warp'
+    name?: string
+    system?: boolean
+    listen_port?: number
+    udp_timeout?: duration
+    workers?: number
+    amnezia?: amnezia
+    profile?: warp_profile
+}
+interface warp_profile {
+    id?: string
+    private_key?: string
+    auth_token?: string
+    recreate?: boolean
+    detour?: string
+}
+
+interface tunnel_client<T extends string, O extends string, DS extends string> extends item_with_tag<T> {
+    type: 'tunnel_client'
+    uuid: string
+    key: string
+    outbound: import('./outbound.ts').outbound<string, O, DS>
+}
+interface tunnel_server<T extends string, I extends string> extends item_with_tag<T> {
+    type: 'tunnel_server'
+    uuid: string
+    users: { uuid: string; key: string }[]
+    inbound: import('./inbound.ts').inbound<string, string, string, I, string>
+    connect_timeout?: duration
+}
+

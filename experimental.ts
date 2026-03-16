@@ -25,7 +25,13 @@ export interface experimental {
     cache_file?: cache_file
     clash_api?: clash_api
     v2ray_api?: v2ray_api
+    unified_delay?: unified_delay
 }
+
+interface unified_delay {
+    enabled: true
+}
+
 
 interface cache_file {
     enabled: true
