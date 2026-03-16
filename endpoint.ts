@@ -145,9 +145,12 @@ interface warp<T extends string, O extends string, DS extends string> extends di
     listen_port?: number
     udp_timeout?: duration
     workers?: number
+    preallocated_buffers_per_pool?: number
+    disable_pauses?: boolean
     amnezia?: amnezia
     profile?: warp_profile
 }
+
 interface warp_profile {
     id?: string
     private_key?: string

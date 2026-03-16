@@ -30,11 +30,23 @@ const warpEnd = createEndpoint({
     }
 })
 
-// Verify sDNS
+// Verify sDNS (now Partial<server>)
 const sdnsServer = createDnsServer({
     type: 'sdns',
     tag: 'sdns-in',
     stamp: 'sdns://...'
+})
+
+// Verify ShadowsocksR
+const ssrOut = createOutbound({
+    type: 'shadowsocksr',
+    tag: 'ssr-out',
+    server: 'example.com',
+    server_port: 8388,
+    method: 'aes-128-ctr',
+    password: 'password',
+    obfs: 'plain',
+    protocol: 'origin'
 })
 
 // Verify Unified Delay
@@ -50,3 +62,4 @@ const tunnelRule = createRule({
     outbound: 'tunnel',
     override_tunnel_destination: 'dest-uuid'
 })
+

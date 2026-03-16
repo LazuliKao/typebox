@@ -8,7 +8,7 @@
  * ```
  */
 
-import type { dialer, duration, item_with_tag, listable, listen, network, server, shadowsocks_method } from './types.ts'
+import type { dialer, duration, item_with_tag, listable, listen, network, server, shadowsocks_destination, shadowsocks_method, shadowsocks_user } from './types.ts'
 import type { server_tls as tls } from './tls.ts'
 import type { transport } from './transport.ts'
 
@@ -77,10 +77,12 @@ interface shadowsocks<T extends string, I extends string> extends listen<T, I> {
     network?: network
     method: shadowsocks_method
     password: string
-    users?: user[]
-    destinations?: [user & server]
+    users?: shadowsocks_user[]
+    destinations?: shadowsocks_destination[]
     multiplex?: multiplex
+    managed?: boolean
 }
+
 interface vmess<T extends string, O extends string, DS extends string, I extends string> extends listen<T, I> {
     type: 'vmess'
     users: vmess_user[]
@@ -167,13 +169,14 @@ interface hysteria2<T extends string, O extends string, DS extends string, I ext
 }
 interface anytls<T extends string, O extends string, DS extends string, I extends string> extends listen<T, I> {
     type: 'anytls'
-    users: user[]
+    users: shadowsocks_user[]
     /**
      * AnyTLS padding scheme line array.
      */
     padding_scheme?: listable<string>
     tls?: tls<O, DS>
 }
+
 interface tun<T extends string, RS extends string> extends item_with_tag<T> {
     type: 'tun'
     interface_name?: string

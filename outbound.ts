@@ -8,7 +8,7 @@
  * ```
  */
 
-import type { dialer, duration, headers, item_with_tag, listable, network, server, shadowsocks_method } from './types.ts'
+import type { dialer, duration, headers, item_with_tag, listable, network, server, shadowsocks_destination, shadowsocks_method, shadowsocks_user } from './types.ts'
 import type { transport } from './transport.ts'
 import type { client_tls as tls } from './tls.ts'
 
@@ -72,8 +72,10 @@ export type outbound<tag extends string, outbound_tag extends string, dns_server
     | tor<tag, outbound_tag, dns_server_tag>
     | ssh<tag, outbound_tag, dns_server_tag>
     | mieru<tag, outbound_tag, dns_server_tag>
+    | shadowsocksr<tag, outbound_tag, dns_server_tag>
     | selector<tag, outbound_tag>
     | urltest<tag, outbound_tag>
+
 
 
 interface remote<T extends string, O extends string, DS extends string> extends dialer<O, DS>, item_with_tag<T> {
@@ -245,7 +247,18 @@ interface mieru<T extends string, O extends string, DS extends string> extends r
     password: string
     multiplexing?: string
 }
+interface shadowsocksr<T extends string, O extends string, DS extends string> extends dialer<O, DS>, server, item_with_tag<T> {
+    type: 'shadowsocksr'
+    method: string
+    password: string
+    obfs?: string
+    obfs_param?: string
+    protocol?: string
+    protocol_param?: string
+    network?: listable<network>
+}
 interface tor<T extends string, O extends string, DS extends string> extends dialer<O, DS>, item_with_tag<T> {
+
 
     type: 'tor'
     executable_path?: string

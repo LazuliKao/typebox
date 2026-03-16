@@ -114,6 +114,14 @@ export interface listen<T extends string, I extends string> extends item_with_ta
 }
 
 export type network_type = 'wifi' | 'cellular' | 'ethernet' | 'other'
+export interface shadowsocks_user {
+    name: string
+    password: string
+}
+export interface shadowsocks_destination extends server {
+    name: string
+    password: string
+}
 
 export interface amnezia {
     jc: number

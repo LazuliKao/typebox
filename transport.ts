@@ -1,6 +1,8 @@
 import type { duration, headers, listable } from './types.ts'
+import type { client_tls as tls } from './tls.ts'
 
 export type transport = http | websocket | quic | grpc | httpupgrade | xhttp
+
 
 interface http {
     type: 'http'
@@ -35,24 +37,26 @@ interface httpupgrade {
     headers?: headers
 }
 
-interface xhttp {
+interface xhttp extends xhttp_base {
     type: 'xhttp'
     mode?: 'auto' | 'packet-up' | 'stream-up' | 'stream-one'
     download?: xhttp_download
 }
+
 interface xhttp_base {
     host?: string
     path?: string
     headers?: Record<string, string>
     domain_strategy?: string
-    x_padding_bytes?: string
+    x_padding_bytes?: string | number
     no_grpc_header?: boolean
     no_sse_header?: boolean
     sc_max_each_post_bytes?: number | string
     sc_min_posts_interval_ms?: number | string
     sc_max_buffered_posts?: number
-    sc_stream_up_server_secs?: string
+    sc_stream_up_server_secs?: string | number
     xmux?: xmux
+
     x_padding_obfs_mode?: boolean
     x_padding_key?: string
     x_padding_header?: string
@@ -71,7 +75,9 @@ interface xhttp_download extends xhttp_base {
     server?: string
     server_port?: number
     detour?: string
+    tls?: tls
 }
+
 interface xmux {
     max_concurrency?: number | string
     max_connections?: number | string

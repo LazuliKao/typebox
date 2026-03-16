@@ -10,7 +10,7 @@
 
 import type { action_reject, base_logical_rule, default_rule_with_metadata } from './rule.ts'
 import type { client_tls } from './tls.ts'
-import type { dialer, dns_network, duration, item_with_tag, listable, options, resolver, strategy } from './types.ts'
+import type { dialer, dns_network, duration, item_with_tag, listable, options, resolver, server, strategy } from './types.ts'
 import type { headers } from './types.ts'
 
 /**
@@ -225,10 +225,12 @@ interface resolved<T extends string, S extends string> extends item_with_tag<T> 
     service: S
     accept_default_resolvers?: boolean
 }
-interface sdns<T extends string, O extends string, DS extends string> extends dialer<O, DS>, item_with_tag<T> {
+interface sdns<T extends string, O extends string, DS extends string> extends dialer<O, DS>, Partial<server>, item_with_tag<T> {
     type: 'sdns'
     stamp: string
 }
+
+
 
 
 type rule<
