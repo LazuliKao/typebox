@@ -4,11 +4,12 @@
  *
  * @example
  * ```ts
- * import { createRuleSet, createRule } from "@zhexin/typebox/route"
+ * import { createRuleSet, createRule } from "@lazulikao/typebox/route"
  * ```
  */
 
-import type { action_reject, base_default_rule, base_logical_rule, default_rule_with_metadata } from './rule.ts'
+import type { action_reject, base_logical_rule, default_rule_with_metadata } from './rule.ts'
+import type { headless_rule } from './rule_set.ts'
 import type { duration, item_with_tag, listable, network_strategy, network_type, resolver, sniff_protocol } from './types.ts'
 
 /**
@@ -23,10 +24,12 @@ import type { duration, item_with_tag, listable, network_strategy, network_type,
  * })
  * ```
  */
-export const createRuleSet = <
+export function createRuleSet<
     tag extends string,
     outbound_tag extends string = never,
->(rs: rule_set<tag, outbound_tag>): rule_set<tag, outbound_tag> => rs
+>(rs: rule_set<tag, outbound_tag>): rule_set<tag, outbound_tag> {
+    return rs
+}
 
 /**
  * @example
@@ -37,12 +40,16 @@ export const createRuleSet = <
  * })
  * ```
  */
-export const createRule = <
+export function createRule<
     outbound_tag extends string = never,
     inbound_tag extends string = never,
     rule_set_tag extends string = never,
     dns_server_tag extends string = never,
->(r: rule<outbound_tag, inbound_tag, rule_set_tag, dns_server_tag>): rule<outbound_tag, inbound_tag, rule_set_tag, dns_server_tag> => r
+>(
+    r: rule<outbound_tag, inbound_tag, rule_set_tag, dns_server_tag>,
+): rule<outbound_tag, inbound_tag, rule_set_tag, dns_server_tag> {
+    return r
+}
 
 /**
  * You should not use this directly, instead use {@link createRuleSet} or {@link createRule}.
@@ -72,8 +79,18 @@ export declare namespace route {
     export { rule, rule_set }
 }
 
-type rule<O extends string, I extends string, RS extends string, DS extends string> = rule_item<O, I, RS, DS> & action<O, DS>
-type rule_item<O extends string, I extends string, RS extends string, DS extends string> = default_rule<I, RS, O> | logical_rule<O, I, RS, DS>
+type rule<
+    O extends string,
+    I extends string,
+    RS extends string,
+    DS extends string,
+> = rule_item<O, I, RS, DS> & action<O, DS>
+type rule_item<
+    O extends string,
+    I extends string,
+    RS extends string,
+    DS extends string,
+> = default_rule<I, RS, O> | logical_rule<O, I, RS, DS>
 type action<O extends string, DS extends string> =
     | action_route<O>
     | action_bypass<O>
@@ -133,11 +150,19 @@ interface default_rule<I extends string, RS extends string, O extends string> ex
      */
     preferred_by?: listable<O>
 }
-interface logical_rule<O extends string, I extends string, RS extends string, DS extends string> extends base_logical_rule {
+interface logical_rule<
+    O extends string,
+    I extends string,
+    RS extends string,
+    DS extends string,
+> extends base_logical_rule {
     rules: rule_item<O, I, RS, DS>[]
 }
 
-type rule_set<T extends string, O extends string> = inline_rule_set<T> | local_rule_set<T> | remote_rule_set<T, O>
+type rule_set<T extends string, O extends string> =
+    | inline_rule_set<T>
+    | local_rule_set<T>
+    | remote_rule_set<T, O>
 interface inline_rule_set<T extends string> extends item_with_tag<T> {
     type: 'inline'
     rules: headless_rule[]
@@ -156,14 +181,6 @@ interface remote_rule_set<T extends string, O extends string> extends outline_ru
     url: string
     download_detour?: O
     update_interval?: duration
-}
-
-type headless_rule = default_headless_rule | logical_headless_rule
-interface default_headless_rule extends base_default_rule {
-    query_type?: listable<string | number>
-}
-interface logical_headless_rule extends base_logical_rule {
-    rules: headless_rule[]
 }
 
 type quic_client = 'chromium' | 'safari' | 'firefox' | 'quic-go'

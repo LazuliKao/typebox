@@ -4,11 +4,22 @@
  *
  * @example
  * ```ts
- * import { createOutbound, createOutbounds } from "@zhexin/typebox/outbound"
+ * import { createOutbound, createOutbounds } from "@lazulikao/typebox/outbound"
  * ```
  */
 
-import type { dialer, duration, headers, item_with_tag, listable, network, server, shadowsocks_destination, shadowsocks_method, shadowsocks_user } from './types.ts'
+import type {
+    dialer,
+    duration,
+    headers,
+    item_with_tag,
+    listable,
+    network,
+    server,
+    shadowsocks_destination,
+    shadowsocks_method,
+    shadowsocks_user,
+} from './types.ts'
 import type { transport } from './transport.ts'
 import type { client_tls as tls } from './tls.ts'
 
@@ -23,11 +34,15 @@ import type { client_tls as tls } from './tls.ts'
  * })
  * ```
  */
-export const createOutbound = <
+export function createOutbound<
     tag extends string,
     outbound_tag extends string = never,
     dns_server_tag extends string = never,
->(outbound: outbound<tag, outbound_tag, dns_server_tag>): outbound<tag, outbound_tag, dns_server_tag> => outbound
+>(
+    outbound: outbound<tag, outbound_tag, dns_server_tag>,
+): outbound<tag, outbound_tag, dns_server_tag> {
+    return outbound
+}
 
 /**
  * @example
@@ -45,11 +60,13 @@ export const createOutbound = <
  * ])
  * ```
  */
-export const createOutbounds = <
+export function createOutbounds<
     tag extends string,
     dns_serever_tag extends string,
     O extends outbound<tag, O['tag'], dns_serever_tag>,
->(outbounds: O[]): O[] => outbounds
+>(outbounds: O[]): O[] {
+    return outbounds
+}
 
 /**
  * You should not use this directly, instead use {@link createOutbound} or {@link createOutbounds}.
@@ -76,8 +93,6 @@ export type outbound<tag extends string, outbound_tag extends string, dns_server
     | selector<tag, outbound_tag>
     | urltest<tag, outbound_tag>
 
-
-
 interface remote<T extends string, O extends string, DS extends string> extends dialer<O, DS>, item_with_tag<T> {
     network?: listable<network>
 }
@@ -103,16 +118,22 @@ interface http<T extends string, O extends string, DS extends string> extends di
     header?: headers
     tls?: tls
 }
-interface shadowsocks<T extends string, O extends string, DS extends string> extends remote<T, O, DS>, server {
-    type: 'shadowsocks'
-    method: shadowsocks_method
-    password: string
-    plugin?: 'obfs-local' | 'v2ray-plugin'
-    plugin_opts?: string
-    network?: network
-    udp_over_tcp?: udp_over_tcp
-    multiplex?: multiplex
-}
+type shadowsocks<T extends string, O extends string, DS extends string> =
+    & remote<T, O, DS>
+    & server
+    & {
+        type: 'shadowsocks'
+        method: shadowsocks_method
+        password: string
+        plugin?: 'obfs-local' | 'v2ray-plugin'
+        plugin_opts?: string
+        network?: network
+    }
+    /** udp_over_tcp and multiplex are mutually exclusive */
+    & (
+        | { udp_over_tcp?: udp_over_tcp; multiplex?: never }
+        | { udp_over_tcp?: never; multiplex?: multiplex }
+    )
 interface vmess<T extends string, O extends string, DS extends string> extends remote<T, O, DS>, server {
     type: 'vmess'
     uuid: string
@@ -165,8 +186,13 @@ interface naive<T extends string, O extends string, DS extends string> extends r
         | 'certificate_public_key_sha256'
     >
 }
-interface hysteria<T extends string, O extends string, DS extends string> extends remote<T, O, DS>, server {
+/** server_port and server_ports are mutually exclusive for hysteria[2] */
+type hy_server_port =
+    | { server_port: number; server_ports?: never }
+    | { server_port?: never; server_ports: listable<string> }
+interface base_hysteria<T extends string, O extends string, DS extends string> extends remote<T, O, DS>, Omit<server, 'server_port'> {
     type: 'hysteria'
+    hop_interval?: duration
     up: string
     up_mbps: number
     down: string
@@ -179,6 +205,9 @@ interface hysteria<T extends string, O extends string, DS extends string> extend
     disable_mtu_discovery?: boolean
     tls: tls
 }
+type hysteria<T extends string, O extends string, DS extends string> =
+    & base_hysteria<T, O, DS>
+    & hy_server_port
 interface shadowtls<T extends string, O extends string, DS extends string> extends dialer<O, DS>, server, item_with_tag<T> {
     type: 'shadowtls'
     version?: 1 | 2 | 3
@@ -204,6 +233,20 @@ interface tuic<T extends string, O extends string, DS extends string> extends re
     zero_rtt_handshake?: boolean
     heartbeat?: duration
     tls: tls
+}
+interface base_hysteria2<T extends string, O extends string, DS extends string> extends remote<T, O, DS>, Omit<server, 'server_port'> {
+    type: 'hysteria2'
+    hop_interval?: duration
+    up_mbps?: number
+    down_mbps?: number
+    obfs?: {
+        type: 'salamander'
+        password: string
+    }
+    password?: string
+    tls: tls
+    brutal_debug?: boolean
+    masquerade?: string | masquerade
 }
 interface hysteria2<T extends string, O extends string, DS extends string> extends remote<T, O, DS>, server {
     type: 'hysteria2'
@@ -237,7 +280,17 @@ interface anytls<T extends string, O extends string, DS extends string> extends 
      * @default 0
      */
     min_idle_session?: number
+    client_metadata?: string
     tls?: tls
+}
+interface tor<T extends string, O extends string, DS extends string> extends dialer<O, DS>, item_with_tag<T> {
+    type: 'tor'
+    executable_path?: string
+    extra_args?: string
+    data_directory?: string
+    torrc?: {
+        [key: string]: string
+    }
 }
 interface mieru<T extends string, O extends string, DS extends string> extends remote<T, O, DS>, server {
     type: 'mieru'
@@ -258,8 +311,6 @@ interface shadowsocksr<T extends string, O extends string, DS extends string> ex
     network?: listable<network>
 }
 interface tor<T extends string, O extends string, DS extends string> extends dialer<O, DS>, item_with_tag<T> {
-
-
     type: 'tor'
     executable_path?: string
     extra_args?: string

@@ -54,10 +54,18 @@ interface base_ech {
     dynamic_record_sizing_disabled?: boolean
 }
 
-interface server_ech extends base_ech {
-    key: listable<string>
-    key_path: string
-}
+type server_ech =
+    & base_ech
+    & (
+        | {
+            key: listable<string>
+            key_path?: string
+        }
+        | {
+            key?: listable<string>
+            key_path: string
+        }
+    )
 
 interface client_ech extends base_ech {
     config?: listable<string>
@@ -126,7 +134,17 @@ interface utls {
     fingerprint?: fingerprint
 }
 
-type fingerprint = 'chrome' | 'firefox' | 'edge' | 'safari' | '360' | 'qq' | 'ios' | 'android' | 'random' | 'randomized'
+type fingerprint =
+    | 'chrome'
+    | 'firefox'
+    | 'edge'
+    | 'safari'
+    | '360'
+    | 'qq'
+    | 'ios'
+    | 'android'
+    | 'random'
+    | 'randomized'
 type tls_version = '1.0' | '1.1' | '1.2' | '1.3'
 type cipher_suites =
     | 'TLS_RSA_WITH_AES_128_CBC_SHA'

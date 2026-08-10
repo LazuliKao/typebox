@@ -4,28 +4,42 @@
  *
  * @example
  * ```ts
- * import { createService } from "@zhexin/typebox/service"
+ * import { createService } from "@lazulikao/typebox/service"
  * ```
  */
 
-import type { dialer, headers, listable, listen, server } from './types.ts'
 import type { client_tls, server_tls } from './tls.ts'
+import type { dialer, headers, listable, listen, server } from './types.ts'
 
-export const createService = <
+export function createService<
     tag extends string,
     outbound_tag extends string,
     inbound_tag extends string,
     dns_server_tag extends string,
->(service: service<tag, outbound_tag, inbound_tag, dns_server_tag>): service<tag, outbound_tag, inbound_tag, dns_server_tag> => service
+>(
+    service: service<tag, outbound_tag, inbound_tag, dns_server_tag>,
+): service<tag, outbound_tag, inbound_tag, dns_server_tag> {
+    return service
+}
 
-export type service<tag extends string, outbound_tag extends string, inbound_tag extends string, dns_server_tag extends string> =
+export type service<
+    tag extends string,
+    outbound_tag extends string,
+    inbound_tag extends string,
+    dns_server_tag extends string,
+> =
     | derp<tag, outbound_tag, inbound_tag, dns_server_tag>
     | resolved<tag, inbound_tag>
     | ssm_api<tag, outbound_tag, inbound_tag, dns_server_tag>
     | ccm<tag, outbound_tag, inbound_tag, dns_server_tag>
     | ocm<tag, outbound_tag, inbound_tag, dns_server_tag>
 
-interface derp<T extends string, O extends string, I extends string, DS extends string> extends listen<T, I> {
+interface derp<
+    T extends string,
+    O extends string,
+    I extends string,
+    DS extends string,
+> extends listen<T, I> {
     type: 'derp'
     tls: server_tls<O, DS>
     config_path: string
@@ -42,14 +56,24 @@ interface resolved<T extends string, I extends string> extends listen<T, I> {
     type: 'resolved'
 }
 
-interface ssm_api<T extends string, O extends string, I extends string, DS extends string> extends listen<T, I> {
+interface ssm_api<
+    T extends string,
+    O extends string,
+    I extends string,
+    DS extends string,
+> extends listen<T, I> {
     type: 'ssm-api'
     servers: { [key: string]: I }
     cache_path?: string
     tls?: server_tls<O, DS>
 }
 
-interface ccm<T extends string, O extends string, I extends string, DS extends string> extends Omit<listen<T, I>, 'detour'> {
+interface ccm<
+    T extends string,
+    O extends string,
+    I extends string,
+    DS extends string,
+> extends Omit<listen<T, I>, 'detour'> {
     type: 'ccm'
     credential_path?: string
     usages_path?: string
@@ -59,7 +83,12 @@ interface ccm<T extends string, O extends string, I extends string, DS extends s
     tls: server_tls<O, DS>
 }
 
-interface ocm<T extends string, O extends string, I extends string, DS extends string> extends Omit<listen<T, I>, 'detour'> {
+interface ocm<
+    T extends string,
+    O extends string,
+    I extends string,
+    DS extends string,
+> extends Omit<listen<T, I>, 'detour'> {
     type: 'ocm'
     credential_path?: string
     usages_path?: string

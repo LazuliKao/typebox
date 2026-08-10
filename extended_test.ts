@@ -1,8 +1,8 @@
-import { createOutbound } from "./outbound.ts"
-import { createEndpoint } from "./endpoint.ts"
-import { createDnsServer } from "./dns.ts"
-import { createExperimental } from "./experimental.ts"
-import { createRule } from "./route.ts"
+import { createOutbound } from './outbound.ts'
+import { createEndpoint } from './endpoint.ts'
+import { createDnsServer } from './dns.ts'
+import { createExperimental } from './experimental.ts'
+import { createRule } from './route.ts'
 
 // Verify Mieru Outbound
 const mieruOut = createOutbound({
@@ -12,7 +12,7 @@ const mieruOut = createOutbound({
     server_port: 27017,
     transport: 'TCP',
     username: 'user',
-    password: 'pass'
+    password: 'pass',
 })
 
 // Verify Warp Endpoint with Amnezia
@@ -26,15 +26,15 @@ const warpEnd = createEndpoint({
         h1: 1,
         h2: 2,
         h3: 3,
-        h4: 4
-    }
+        h4: 4,
+    },
 })
 
 // Verify sDNS (now Partial<server>)
 const sdnsServer = createDnsServer({
     type: 'sdns',
     tag: 'sdns-in',
-    stamp: 'sdns://...'
+    stamp: 'sdns://...',
 })
 
 // Verify ShadowsocksR
@@ -46,20 +46,19 @@ const ssrOut = createOutbound({
     method: 'aes-128-ctr',
     password: 'password',
     obfs: 'plain',
-    protocol: 'origin'
+    protocol: 'origin',
 })
 
 // Verify Unified Delay
 const exp = createExperimental({
     unified_delay: {
-        enabled: true
-    }
+        enabled: true,
+    },
 })
 
 // Verify Tunnel Override
 const tunnelRule = createRule({
     action: 'route',
     outbound: 'tunnel',
-    override_tunnel_destination: 'dest-uuid'
+    override_tunnel_destination: 'dest-uuid',
 })
-

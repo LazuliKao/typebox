@@ -1,59 +1,86 @@
 name: Publish
+
 on:
-  push:
-    tags:
-      - 'v*.*.*'
+    push:
+        tags:
+            - 'v*.*.*'
 
 jobs:
-  publish:
-    runs-on: ubuntu-latest
+    publish:
+        runs-on: ubuntu-latest
 
-    permissions:
-      contents: write
-      packages: write
+        permissions:
+            contents: write
+            packages: write
 
-    steps:
-      - uses: actions/checkout@v5
+        steps:
+            - uses: actions/checkout@v6
 
-      - name: Update package name and scope
-        run: |
-          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          NODE_PKG_NAME="@$REPO_LOWER"
-          node -e "const pkg = JSON.parse(require('fs').readFileSync('package.json')); pkg.name = '$NODE_PKG_NAME'; require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2))"
-          echo "SCOPE=@$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+            - name: Setup Deno
+              uses: denoland/setup-deno@v2
+              with:
+                  deno-version: latest
+                  cache: true
 
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '20'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '${{ env.SCOPE }}'
+            - name: Update package name and scope
+              run: |
+                  REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+                  NODE_PKG_NAME="@$REPO_LOWER"
+                  node -e "const pkg = JSON.parse(require('fs').readFileSync('package.json')); pkg.name = '$NODE_PKG_NAME'; require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2))"
+                  echo "SCOPE=@$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      - name: Extract version
-        id: version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: '20'
+                  registry-url: 'https://npm.pkg.github.com'
+                  scope: '${{ env.SCOPE }}'
 
-      - name: Update version
-        run: |
-          npm version ${{ steps.version.outputs.VERSION }} --no-git-tag-version
+            - name: Extract version
+              id: version
+              run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-      - name: Publish package
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Update version
+              run: |
+                  npm version ${{ steps.version.outputs.VERSION }} --no-git-tag-version
 
-  releases:
-    runs-on: ubuntu-latest
+            - name: Publish package
+              run: npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    permissions:
-      contents: write
+            - name: Publish to JSR
+              run: deno publish
 
-    steps:
-      - uses: actions/checkout@v5
+            - name: Pack npm package
+              run: deno pack --output typebox.tgz
 
-      - name: Build
-        run: npx ts-json-schema-generator --path schema.ts --type "schema" > schema.json
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: '24'
+                  registry-url: 'https://registry.npmjs.org'
 
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: schema.json
+            - run: tar -xzf typebox.tgz
+            - working-directory: package
+              run: npm publish --tag latest
+
+    releases:
+        runs-on: ubuntu-latest
+
+        permissions:
+            contents: write
+
+        steps:
+            - uses: actions/checkout@v6
+
+            - name: Build
+              run: npx ts-json-schema-generator --path schema.ts --type "schema" -o schema.json
+
+            - name: Build
+              run: npx ts-json-schema-generator --path schema.ts --type "rule_set_schema" -o rule_set.json
+
+            - name: Release
+              uses: softprops/action-gh-release@v3
+              with:
+                  files: |
+                      schema.json
+                      rule_set.json

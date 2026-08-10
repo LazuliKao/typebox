@@ -3,7 +3,6 @@ import type { client_tls as tls } from './tls.ts'
 
 export type transport = http | websocket | quic | grpc | httpupgrade | xhttp
 
-
 interface http {
     type: 'http'
     host?: listable<string>
@@ -88,4 +87,3 @@ interface xmux {
 }
 
 type http_method = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'TRACE'
-

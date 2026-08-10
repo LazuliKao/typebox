@@ -4,11 +4,13 @@
  *
  * @example
  * ```ts
- * import { createLog } from "@zhexin/typebox/log"
+ * import { createLog } from "@lazulikao/typebox/log"
  * ```
  */
 
-export const createLog = (l: log): log => l
+export function createLog(l: log): log {
+    return l
+}
 
 /**
  * You should not use this directly, instead use {@link createLog}.
@@ -20,4 +22,12 @@ export interface log {
     timestamp?: boolean
 }
 
-type log_level = 'trace' | 'debug' | 'info' | 'warn' | 'warning' | 'error' | 'fatal' | 'panic'
+type log_level =
+    | 'trace'
+    | 'debug'
+    | 'info'
+    | 'warn'
+    | 'warning'
+    | 'error'
+    | 'fatal'
+    | 'panic'

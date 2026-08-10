@@ -6,7 +6,8 @@ export type headers = Record<string, listable<string>>
 
 type can_empty<T extends string> = '' | T
 type non_empty<T extends string> = T extends '' ? never : T
-type empty_join<L extends string[]> = L extends [infer F extends string, ...infer R extends string[]] ? `${can_empty<F>}${empty_join<R>}` : ''
+type empty_join<L extends string[]> = L extends [infer F extends string, ...infer R extends string[]] ? `${can_empty<F>}${empty_join<R>}`
+    : ''
 export type duration = non_empty<
     empty_join<[
         `${number}d`,
@@ -44,7 +45,16 @@ export type sniff_protocol =
     | 'ssh'
     | 'rdp'
 
-export type network_strategy = 'default' | 'fallback' | 'hybrid' | 'wifi' | 'cellular' | 'ethernet' | 'wifi_only' | 'cellular_only' | 'ethernet_only'
+export type network_strategy =
+    | 'default'
+    | 'fallback'
+    | 'hybrid'
+    | 'wifi'
+    | 'cellular'
+    | 'ethernet'
+    | 'wifi_only'
+    | 'cellular_only'
+    | 'ethernet_only'
 export type network = 'tcp' | 'udp' | 'icmp'
 export type dns_network = 'tcp' | 'udp'
 
@@ -145,4 +155,3 @@ export interface amnezia {
     j3?: string
     itime?: number
 }
-

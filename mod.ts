@@ -4,8 +4,8 @@
  *
  * @example
  * ```ts
- * import { createTypebox } from "@zhexin/typebox"
- * import { createOutbound } from "@zhexin/typebox/outbound"
+ * import { createTypebox } from "@lazulikao/typebox"
+ * import { createOutbound } from "@lazulikao/typebox/outbound"
  *
  * const ss_out = createOutbound({
  *     type: 'shadowsocks',
@@ -48,8 +48,19 @@ import type { service } from './service.ts'
 export interface typebox<
     O extends outbound<string, E['tag'] | O['tag'], DS['tag']>,
     E extends endpoint<string, E['tag'] | O['tag'], DS['tag']>,
-    I extends inbound<string, E['tag'] | O['tag'], DS['tag'], E['tag'] | I['tag'], RS['tag']>,
-    S extends service<string, E['tag'] | O['tag'], E['tag'] | I['tag'], DS['tag']>,
+    I extends inbound<
+        string,
+        E['tag'] | O['tag'],
+        DS['tag'],
+        E['tag'] | I['tag'],
+        RS['tag']
+    >,
+    S extends service<
+        string,
+        E['tag'] | O['tag'],
+        E['tag'] | I['tag'],
+        DS['tag']
+    >,
     DS extends dns.server<string, E['tag'] | O['tag'], S['tag'], DS['tag']>,
     RS extends route.rule_set<string, E['tag'] | O['tag']>,
 > {
@@ -69,7 +80,7 @@ export interface typebox<
 /**
  * @example
  * ```ts
- * import { createTypebox } from "@zhexin/typebox"
+ * import { createTypebox } from "@lazulikao/typebox"
  *
  * const config = createTypebox({
  *     log: {},
@@ -82,17 +93,35 @@ export interface typebox<
  * })
  * ```
  */
-export const createTypebox = <
+export function createTypebox<
     outbound_tag extends string,
     inbound_tag extends string,
     endpoint_tag extends string,
     dns_server_tag extends string,
     rule_set_tag extends string,
     service_tag extends string,
-    DS extends dns.server<dns_server_tag, E['tag'] | O['tag'], S['tag'], DS['tag']> = never,
+    DS extends dns.server<
+        dns_server_tag,
+        E['tag'] | O['tag'],
+        S['tag'],
+        DS['tag']
+    > = never,
     RS extends route.rule_set<rule_set_tag, E['tag'] | O['tag']> = never,
     O extends outbound<outbound_tag, E['tag'] | O['tag'], DS['tag']> = never,
     E extends endpoint<endpoint_tag, E['tag'] | O['tag'], DS['tag']> = never,
-    I extends inbound<inbound_tag, E['tag'] | O['tag'], DS['tag'], E['tag'] | I['tag'], RS['tag']> = never,
-    S extends service<service_tag, E['tag'] | O['tag'], E['tag'] | I['tag'], DS['tag']> = never,
->(typebox: typebox<O, E, I, S, DS, RS>): typebox<O, E, I, S, DS, RS> => typebox
+    I extends inbound<
+        inbound_tag,
+        E['tag'] | O['tag'],
+        DS['tag'],
+        E['tag'] | I['tag'],
+        RS['tag']
+    > = never,
+    S extends service<
+        service_tag,
+        E['tag'] | O['tag'],
+        E['tag'] | I['tag'],
+        DS['tag']
+    > = never,
+>(typebox: typebox<O, E, I, S, DS, RS>): typebox<O, E, I, S, DS, RS> {
+    return typebox
+}

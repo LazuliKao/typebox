@@ -4,7 +4,7 @@
  *
  * @example
  * ```ts
- * import { createEndpoint, createEndpoints } from "@zhexin/typebox/endpoint"
+ * import { createEndpoint, createEndpoints } from "@lazulikao/typebox/endpoint"
  * ```
  */
 
@@ -12,18 +12,24 @@ import type { amnezia, dialer, duration, item_with_tag, listable } from './types
 import type { inbound } from './inbound.ts'
 import type { outbound } from './outbound.ts'
 
-export const createEndpoint = <
+export function createEndpoint<
     tag extends string,
     outbound_tag extends string = never,
     dns_server_tag extends string = never,
->(endpoint: endpoint<tag, outbound_tag, dns_server_tag>): endpoint<tag, outbound_tag, dns_server_tag> => endpoint
+>(
+    endpoint: endpoint<tag, outbound_tag, dns_server_tag>,
+): endpoint<tag, outbound_tag, dns_server_tag> {
+    return endpoint
+}
 
-export const createEndpoints = <
+export function createEndpoints<
     tag extends string,
     outbound_tag extends string,
     dns_server_tag extends string,
     E extends endpoint<tag, outbound_tag | E['tag'], dns_server_tag>,
->(endpoints: E[]): E[] => endpoints
+>(endpoints: E[]): E[] {
+    return endpoints
+}
 
 /**
  * You should not use this directly, instead use {@link createEndpoint} or {@link createEndpoints}.
@@ -38,7 +44,6 @@ export type endpoint<
     | warp<tag, outbound_tag, dns_server_tag>
     | tunnel_client<tag, outbound_tag, dns_server_tag>
     | tunnel_server<tag, tag>
-
 
 interface wireguard<T extends string, O extends string, DS extends string> extends dialer<O, DS>, item_with_tag<T> {
     type: 'wireguard'
@@ -174,4 +179,3 @@ interface tunnel_server<T extends string, I extends string> extends item_with_ta
     inbound: inbound<string, string, string, I, string>
     connect_timeout?: duration
 }
-

@@ -4,35 +4,63 @@
  *
  * @example
  * ```ts
- * import { createInbound, createInbounds } from "@zhexin/typebox/inbound"
+ * import { createInbound, createInbounds } from "@lazulikao/typebox/inbound"
  * ```
  */
 
-import type { dialer, duration, item_with_tag, listable, listen, network, server, shadowsocks_destination, shadowsocks_method, shadowsocks_user } from './types.ts'
+import type {
+    dialer,
+    duration,
+    item_with_tag,
+    listable,
+    listen,
+    network,
+    server,
+    shadowsocks_destination,
+    shadowsocks_method,
+    shadowsocks_user,
+} from './types.ts'
 import type { server_tls as tls } from './tls.ts'
 import type { transport } from './transport.ts'
 
-export const createInbound = <
+export function createInbound<
     tag extends string,
     inbound_tag extends string = never,
     outbound_tag extends string = never,
     dns_server_tag extends string = never,
     rule_set_tag extends string = never,
->(inbound: inbound<tag, outbound_tag, dns_server_tag, inbound_tag, rule_set_tag>): inbound<tag, outbound_tag, dns_server_tag, inbound_tag, rule_set_tag> =>
-    inbound
+>(
+    inbound: inbound<
+        tag,
+        outbound_tag,
+        dns_server_tag,
+        inbound_tag,
+        rule_set_tag
+    >,
+): inbound<tag, outbound_tag, dns_server_tag, inbound_tag, rule_set_tag> {
+    return inbound
+}
 
-export const createInbounds = <
+export function createInbounds<
     tag extends string,
     outbound_tag extends string,
     dns_server_tag extends string,
     rule_set_tag extends string,
     I extends inbound<tag, outbound_tag, dns_server_tag, I['tag'], rule_set_tag>,
->(inbounds: I[]): I[] => inbounds
+>(inbounds: I[]): I[] {
+    return inbounds
+}
 
 /**
  * You should not use this directly, instead use {@link createInbound} or {@link createInbounds}.
  */
-export type inbound<tag extends string, outbound_tag extends string, dns_server_tag extends string, inbound_tag extends string, rule_set_tag extends string> =
+export type inbound<
+    tag extends string,
+    outbound_tag extends string,
+    dns_server_tag extends string,
+    inbound_tag extends string,
+    rule_set_tag extends string,
+> =
     | direct<tag, inbound_tag>
     | mixed<tag, inbound_tag>
     | socks<tag, inbound_tag>
@@ -66,7 +94,12 @@ interface socks<T extends string, I extends string> extends listen<T, I> {
     type: 'socks'
     users?: auth[]
 }
-interface http<T extends string, O extends string, DS extends string, I extends string> extends listen<T, I> {
+interface http<
+    T extends string,
+    O extends string,
+    DS extends string,
+    I extends string,
+> extends listen<T, I> {
     type: 'http'
     users?: auth[]
     set_system_proxy?: boolean
@@ -90,7 +123,12 @@ interface vmess<T extends string, O extends string, DS extends string, I extends
     multiplex?: multiplex
     transport?: transport
 }
-interface trojan<T extends string, O extends string, DS extends string, I extends string> extends listen<T, I> {
+interface trojan<
+    T extends string,
+    O extends string,
+    DS extends string,
+    I extends string,
+> extends listen<T, I> {
     type: 'trojan'
     users: user[]
     tls?: tls<O, DS>
@@ -101,17 +139,33 @@ interface trojan<T extends string, O extends string, DS extends string, I extend
     multiplex?: multiplex
     transport?: transport
 }
-interface naive<T extends string, O extends string, DS extends string, I extends string> extends listen<T, I> {
+interface naive<
+    T extends string,
+    O extends string,
+    DS extends string,
+    I extends string,
+> extends listen<T, I> {
     type: 'naive'
     users: auth[]
     network?: network
     /**
      * @default bbr
      */
-    quic_congestion_control?: 'bbr' | 'bbr_standard' | 'bbr2' | 'bbr2_variant' | 'cubic' | 'reno'
+    quic_congestion_control?:
+        | 'bbr'
+        | 'bbr_standard'
+        | 'bbr2'
+        | 'bbr2_variant'
+        | 'cubic'
+        | 'reno'
     tls?: tls<O, DS>
 }
-interface hysteria<T extends string, O extends string, DS extends string, I extends string> extends listen<T, I> {
+interface hysteria<
+    T extends string,
+    O extends string,
+    DS extends string,
+    I extends string,
+> extends listen<T, I> {
     type: 'hysteria'
     up: string
     up_mbps: number
@@ -125,7 +179,12 @@ interface hysteria<T extends string, O extends string, DS extends string, I exte
     disable_mtu_discovery?: boolean
     tls: tls<O, DS>
 }
-interface shadowtls<T extends string, O extends string, DS extends string, I extends string> extends listen<T, I> {
+interface shadowtls<
+    T extends string,
+    O extends string,
+    DS extends string,
+    I extends string,
+> extends listen<T, I> {
     type: 'shadowtls'
     version?: 1 | 2 | 3
     password?: string
@@ -137,7 +196,12 @@ interface shadowtls<T extends string, O extends string, DS extends string, I ext
     strict_mode?: boolean
     wildcard_sni?: 'off' | 'authed' | 'all'
 }
-interface vless<T extends string, O extends string, DS extends string, I extends string> extends listen<T, I> {
+interface vless<
+    T extends string,
+    O extends string,
+    DS extends string,
+    I extends string,
+> extends listen<T, I> {
     type: 'vless'
     users: vless_user[]
     tls?: tls<O, DS>
@@ -153,7 +217,12 @@ interface tuic<T extends string, O extends string, DS extends string, I extends 
     heartbeat?: duration
     tls: tls<O, DS>
 }
-interface hysteria2<T extends string, O extends string, DS extends string, I extends string> extends listen<T, I> {
+interface hysteria2<
+    T extends string,
+    O extends string,
+    DS extends string,
+    I extends string,
+> extends listen<T, I> {
     type: 'hysteria2'
     up_mbps?: number
     down_mbps?: number

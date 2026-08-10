@@ -1,4 +1,4 @@
-import { createNtp } from '@zhexin/typebox/ntp'
+import { createNtp } from './ntp.ts'
 
 const _ = createNtp({
     enabled: true,

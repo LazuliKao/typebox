@@ -4,31 +4,39 @@ This project provides TypeScript types for the entire sing-box config.
 
 ## Why Use TypeBox?
 
-- **Type Safety**: TypeBox provides a robust type system that ensures your configurations are type-safe, reducing errors.
-- **Auto-completion**: With TypeBox, you get auto-completion features in your IDE, making it easier to write and maintain configurations.
-- **Modular Design**: TypeBox allows you to create modular configurations, enabling better organization and reuse of configuration components.
-- **Tag Checking**: TypeBox supports tag checking, ensuring that all required tags are present in your configurations.
+- **Type Safety**: TypeBox provides a robust type system that ensures your
+  configurations are type-safe, reducing errors.
+- **Auto-completion**: With TypeBox, you get auto-completion features in your
+  IDE, making it easier to write and maintain configurations.
+- **Modular Design**: TypeBox allows you to create modular configurations,
+  enabling better organization and reuse of configuration components.
+- **Tag Checking**: TypeBox supports tag checking, ensuring that all required
+  tags are present in your configurations.
 
 ## Try TypeBox in browser
 
-You can try TypeBox in browser: [TypeBox Playground](https://typebox.zhexin.org). It runs entirely in the browser, so it is almost identical to the local setup but doesn't require installing anything on your machine.
+You can try TypeBox in browser:
+[TypeBox Playground](https://typebox.zhexin.org). It runs entirely in the
+browser, so it is almost identical to the local setup but doesn't require
+installing anything on your machine.
 
 > [!IMPORTANT]
-> All data is stored in your browser's local storage, so it won't be sent to any server.
+> All data is stored in your browser's local storage, so it won't be sent to any
+> server.
 
 ## How to use?
 
 | Feature Matrix | JSON Schema | TypeScript |
 | -------------- | ----------- | ---------- |
-| Auto complete  | ✔️           | ✔️          |
-| Modular        | ❌           | ✔️          |
-| Tag check      | ❌           | ✔️          |
+| Auto complete  | ✔️          | ✔️         |
+| Modular        | ❌          | ✔️         |
+| Tag check      | ❌          | ✔️         |
 
 ### Use in JSON schema
 
 ```jsonc
 {
-    "$schema": "https://github.com/LazuliKao/typebox/releases/latest/download/schema.json",
+    "$schema": "https://github.com/LazuliKao/typebox/releases/latest/download/schema.json"
     // other sing-box config
 }
 ```
@@ -48,6 +56,8 @@ Then install:
 npm install @lazulikao/typebox
 yarn add @lazulikao/typebox
 pnpm add @lazulikao/typebox
+# Deno
+deno add jsr:@lazulikao/typebox
 # Bun
 bun add @lazulikao/typebox
 ```
@@ -56,8 +66,8 @@ Coding
 
 ```ts
 // main.ts
-import { createTypebox } from "@lazulikao/typebox"
-import { createOutbound } from "@lazulikao/typebox/outbound"
+import { createTypebox } from '@lazulikao/typebox'
+import { createOutbound } from '@lazulikao/typebox/outbound'
 
 const ss_out = createOutbound({
     type: 'shadowsocks',
@@ -82,7 +92,10 @@ const config = createTypebox({
 })
 
 // export to .json file
-await Deno.writeTextFile("./path/to/config.json", JSON.stringify(config, null, 4))
+await Deno.writeTextFile(
+    './path/to/config.json',
+    JSON.stringify(config, null, 4),
+)
 ```
 
 Run it
@@ -93,11 +106,13 @@ deno run --allow-write ./main.ts
 
 ## About version
 
-This project does not follow semantic versioning in the traditional sense. Instead, it follows the versioning of sing-box.
+This project does not follow semantic versioning in the traditional sense.
+Instead, it follows the versioning of sing-box.
 
 For example, 1.10.x provides TypeScript types for sing-box 1.10.x.
 
-However, the "x" is independent of the sing-box version and is used for revisions of this project itself.
+However, the "x" is independent of the sing-box version and is used for
+revisions of this project itself.
 
 ## Standard
 
@@ -107,7 +122,8 @@ The differences are **intentional**.
 
 ### Tag
 
-The value of any tag field like `dns.server.tag` or `outbound.tag` is required, even though it's optional in sing-box.
+The value of any tag field like `dns.server.tag` or `outbound.tag` is required,
+even though it's optional in sing-box.
 
 ### Enabled
 

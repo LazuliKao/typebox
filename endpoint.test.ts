@@ -1,4 +1,4 @@
-import { createEndpoint, createEndpoints } from '@zhexin/typebox/endpoint'
+import { createEndpoint, createEndpoints } from './endpoint.ts'
 
 const wg = createEndpoint({
     type: 'wireguard',
